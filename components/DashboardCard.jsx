@@ -1,0 +1,84 @@
+import React from 'react'
+
+import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
+const user = {
+    name: "Nishant Tyagi",
+    gender: "Male",
+    dob: "1999-05-12",
+    email: "nishant@example.com",
+    phone: "+91 9876543210",
+    emailVerified: true,
+    phoneVerified: false,
+    address: "123 Shastri Nagar, Delhi, India",
+    aadhaar: "XXXX-XXXX-1234",
+    pan: "ABCDE1234F",
+    voterId: "DEL1234567",
+    status: "Verified", // Could be Verified, Incomplete, Pending
+    photoUrl: "https://in.bmscdn.com/iedb/artist/images/website/poster/large/vijay_deverakonda_13416_27-07-2016_11-17-19.jpg", // Use a placeholder or actual photo URL
+  };
+
+  const statusBadge = {
+    Verified: <BadgeCheck className="text-green-600" />,
+    Incomplete: <AlertCircle className="text-yellow-600" />,
+    Pending: <Clock className="text-orange-500" />,
+  };
+const DashboardCard = () => {
+  return (
+    <div className="max-w-7xl mt-24 mx-auto flex flex-wrap justify-around bg-gray-800 shadow-md rounded-xl p-6 border space-y-6">
+      
+
+      <div className=" flex flex-col gap-6 items-start">
+        <div className=" flex justify-center items-center gap-6  ">
+            <h2 className="text-2xl font-semibold text-white">🔷 Profile Summary</h2>
+        
+             <div className="flex items-center gap-2">
+                <p className="text-sm text-white font-medium">Status:</p>
+                <div className="flex items-center gap-1 font-semibold text-base">
+                {statusBadge[user.status]} <span>{user.status}</span>
+                </div>
+            </div>
+        </div>
+        <img
+          src={user.photoUrl}
+          alt="Profile"
+          className="w-28 h-28 rounded-full object-cover border-2 border-blue-500"
+        />
+
+        <div className="flex flex-col space-y-2">
+          <p className="text-xl font-bold text-white">{user.name}</p>
+          <p className="text-white">👤 {user.gender} | 🎂 {user.dob}</p>
+          <p className="text-white">
+            📧 {user.email}{" "}
+            {user.emailVerified ? (
+              <span className="text-green-600 ml-1">✔️ Verified</span>
+            ) : (
+              <span className="text-red-500 ml-1">❌ Not Verified</span>
+            )}
+          </p>
+          <p className="text-white">
+            📱 {user.phone}{" "}
+            {user.phoneVerified ? (
+              <span className="text-green-600 ml-1">✔️ Verified</span>
+            ) : (
+              <span className="text-red-500 ml-1">❌ Not Verified</span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-1 gap-10 ">
+           
+        <div>
+            <p className="text-white">📍 <strong>Address:</strong> {user.address}</p>
+        <p className="text-white">🆔 <strong>Aadhaar:</strong> {user.aadhaar}</p>
+        <p className="text-white">🧾 <strong>PAN:</strong> {user.pan}</p>
+        <p className="text-white">🗳️ <strong>Voter ID:</strong> {user.voterId}</p>
+        </div>
+      </div>
+
+      
+    </div>
+  )
+}
+
+export default DashboardCard

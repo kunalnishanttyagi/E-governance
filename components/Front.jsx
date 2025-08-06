@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Services from "./Services"
 import AnimatedTestimonialsDemo from "./Testimonials";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 // here i will make a search option for user with a background image that will change every 5 seconds
 
 const Front = () => {
