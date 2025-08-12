@@ -18,9 +18,21 @@ export default function SignupFormDemo() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  async function handleSubmit (e){
     e.preventDefault();
     console.log("Form submitted:", userData);
+    const res = await fetch("/api/userController", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // tells server we're sending JSON
+      },
+      body: JSON.stringify({ action:"signup", userData}), // convert JS object to JSON string
+    }).then((res) => res.json()).catch((err) => {
+      console.error("Error in signup API:", err);
+      return { error: "Failed to sign up" };
+    });
+    console.log("Response from signup API:", res);
+    
 
     console.log("Form submitted");
   };
@@ -28,6 +40,7 @@ export default function SignupFormDemo() {
     firstname: "",
     lastname: "",
     email: "",
+    dateOfBirth:"",
     password: "",
     aadhar: "",
     phone: "",
@@ -55,8 +68,13 @@ export default function SignupFormDemo() {
             <Label htmlFor="lastname">Last name</Label>
             <Input id="lastname" placeholder="Durden" name="lastname" onChange={handleChange} type="text" />
           </LabelInputContainer>
+          
         </div>
-        <LabelInputContainer className="mb-4">
+        <LabelInputContainer>
+            <Label htmlFor="dateOfBirth">Date oF Birth</Label>
+            <Input id="dateOfBirth" placeholder="01-01-2009" name="dateOfBirth" onChange={handleChange} type="date" />
+          </LabelInputContainer>
+        <LabelInputContainer className="mb-4 mt-4">
           <Label htmlFor="email">Email Address</Label>
           <Input id="email" name="email" placeholder="projectmayhem@fc.com" onChange={handleChange} type="email" />
         </LabelInputContainer>

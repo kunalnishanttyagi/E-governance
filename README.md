@@ -39,3 +39,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
     This app is a one solution to all need to all citizen of india 
     people can solve their issues of aadhar pan and even online voting 
+    // medical help for people 
+    // send issues related to you
+
+
+
+
+
+
+    // candidate has a role
+    // pradhan , mla, partyhead , admin, 
+
+    // user
+    // aadhar pan phone fatherid mother id husband id wife id password 

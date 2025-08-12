@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Listinapplications = () => {
+const Listinapplications = ({data}) => {
   return (
     <div>
       
