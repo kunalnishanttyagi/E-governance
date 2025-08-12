@@ -52,3 +52,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
     // user
     // aadhar pan phone fatherid mother id husband id wife id password 
+
+
+
+    now a admin can add user with their aadhar card number to their role of police munciple electricity 
