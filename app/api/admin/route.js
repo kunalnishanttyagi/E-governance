@@ -29,8 +29,8 @@ const addToDepartment = async ( aadhar, departments ) => {
         
         // Assuming you have a User model to interact with the database
         const user = await User.findOne({ aadhar });
-        console.log("User found:", user.aadhar);
-        return NextResponse.json({ message: 'User found', user }, { status: 200 });
+        console.log("User found:", user.role);
+        // return NextResponse.json({ message: 'User found', user }, { status: 200 });
         if (!user) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }

@@ -32,11 +32,11 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    pan:{
+    pancard:{
         type:String,
         // required:true
     },
-    ration:{
+    rationcard:{
         type:String,
         // required:true
     },

@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function AdminForm() {
   const [aadhar, setAadhar] = useState("");
-  const [departments, setDepartments] = useState("");
+  const [departments, setDepartments] = useState("pradhan");
 
   const handleDeptChange = (dept) => {
     setDepartments(dept);

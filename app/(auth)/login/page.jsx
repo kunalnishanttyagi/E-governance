@@ -1,15 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Label } from "../../../components/ui/label";
 // import { Input } from "../ui/input";
 import { Input } from "../../../components/ui/input";
 import { cn } from "../../../lib/utils";
+import { useRouter } from "next/navigation";
 import {
   IconBrandGithub,
   IconBrandGoogle,
   IconBrandOnlyfans,
 } from "@tabler/icons-react";
 import { Button } from "../../../components/ui/button";
+// import { Router } from "next/router";
 
 export default function SignupFormDemo() {
     const handleChange = (e) => {
@@ -19,6 +21,8 @@ export default function SignupFormDemo() {
       [name]: value,
     }));
   };
+  
+const Router=useRouter();
   async function sendOtp(){
     console.log("Otp sent for:", userData.aadhar);
     const res = await fetch("/api/userController", {
@@ -43,10 +47,21 @@ export default function SignupFormDemo() {
         "Content-Type": "application/json", // tells server we're sending JSON
       },
       body: JSON.stringify({action:"checkOtp",userData}), // convert JS object to JSON string
-    }).then((res) => res.json()).catch((err) => {
-      console.error("Error in signup API:", err);
-      return { error: "Failed to sign up in frontend" };
-    });
+    })
+    const data = await res.json();
+    console.log("Responsefrom checkOtp API:", data);
+    
+    // if(res.user){
+    //   router.push("/dashboard");
+    // }
+    console.log("thisis the status", data);
+    if (res.status == 200) {
+      console.log("pushing to dashboard")
+      Router.push("/dashboard"); // ✅ Redirect
+    } else {
+      const data = await res.json();
+      alert(data.message || "Invalid OTP");
+    }
     console.log("Response from signup API:", res);
     
 
