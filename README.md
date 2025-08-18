@@ -68,4 +68,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
     // today i made the toast notification
     // on sigin in and login
 
-    
+    issue implemented and now the issue will sent to respective department
+    medical help request implemented and now the medical help request will sent
+
+    now we will use generative ai to handle all medical issues 
