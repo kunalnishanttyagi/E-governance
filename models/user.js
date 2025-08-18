@@ -51,7 +51,28 @@ const userSchema=new mongoose.Schema({
     role:{
         type:String,
         default:"user"
-    }
+    },
+    address:{
+        type:String,
+        // required:true
+        default:""
+    },
+    profilePicture:{
+        type:String,
+        // required:true
+        default:""
+        
+    },
+    // notification is a array of notifications where notification is a simple string
+    notifications:[{
+        type:String,
+    }],
+
+    // now it is time to make changes in our model as we have came so far that now we need to add more fields
+    // till now feeling fine but do not know about tommorow lets go guys
+    
+    
+
 
 
 })

@@ -1,10 +1,14 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Label } from "../../../components/ui/label";
+// import { toast } from "react-toastify";
 // import { Input } from "../ui/input";
+import { toast } from "sonner"
+
 import { Input } from "../../../components/ui/input";
 import { cn } from "../../../lib/utils";
 import { useRouter } from "next/navigation";
+import {App} from "../../../components/Toast"
 import {
   IconBrandGithub,
   IconBrandGoogle,
@@ -21,6 +25,39 @@ export default function SignupFormDemo() {
       [name]: value,
     }));
   };
+  const router=useRouter();
+  useEffect(()=>{
+    console.log("checkUserExists called");
+    const checkUserExists=async()=>{
+      const res=await fetch("/api/userController?action=checkUserExists",{
+        method:"GET",
+        credentials:"include",
+        headers:{
+          "Content-Type":"application/json",
+        },
+      });
+      const data=await res.json();
+      console.log("Response from checkUserExists API:", data);
+
+
+
+
+
+      // change this at end
+
+
+
+
+
+
+
+
+      
+      // if(data.result) router.push("/dashboard");
+    }
+    checkUserExists();
+    
+  },[]);
   
 const Router=useRouter();
   async function sendOtp(){
@@ -37,6 +74,7 @@ const Router=useRouter();
     });
     console.log("Response from sendOtp API:", res);
   }
+  // const toast=useToast();
   async function handleSubmit (e){
     e.preventDefault();
     console.log("Form submitted: trying to check otp", userData);
@@ -57,6 +95,9 @@ const Router=useRouter();
     console.log("thisis the status", data);
     if (res.status == 200) {
       console.log("pushing to dashboard")
+      // toast("Login successful");
+      toast("Login Successful!")
+
       Router.push("/dashboard"); // ✅ Redirect
     } else {
       const data = await res.json();

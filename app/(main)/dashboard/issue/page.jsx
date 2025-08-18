@@ -5,104 +5,134 @@ import { Label } from "../../../../@/components/ui/label";
 import { Input } from "../../../../@/components/ui/input";
 import { Textarea } from "../../../../@/components/ui/textarea";
 import { Button } from "../../../../@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../@/components/ui/select";
 import { toast } from "sonner";
 
-// type Props = {
-//   departments: string[]; // e.g., ["Electricity", "Water", "Roads"]
-// };
-// ["pradhan","police","dm","secratory","municipal","electricity"]
-
 export default function IssueReportForm() {
-  const [description, setDescription] = useState("");
-  const [department, setDepartment] = useState("");
-  const [image, setImage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const alldepartments = ["pradhan", "police", "dm", "secratory", "municipal", "electricity"];
+  const [formData, setFormData] = useState({
+    description: "",
+    department: "",
+    image: null
+  });
 
-  const handleImageChange = (e) => {
+  const alldepartments = [
+    "pradhan",
+    "police",
+    "dm",
+    "secratory",
+    "municipal",
+    "electricity",
+  ];
+
+  // for description + department
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // for image
+  const handleImageChange=(e)=> {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+      setFormData((prev) => ({
+        ...prev,
+        image: e.target.files[0],
+      }));
     }
   };
 
   const handleSubmit = async () => {
-    console.log("Submitting issue report...",description, department, image);
-    if (!description || !department) {
+    console.log("Submitting issue report...", formData);
+
+    if (!formData.description || !formData.department) {
       toast.error("Please fill all fields");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("description", description);
-    formData.append("department", department);
-    if (image) formData.append("image", image);
-
-    setLoading(true);
     try {
-      const res = await fetch("/api/report-issue", {
+      const res = await fetch("/api/userController", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "sendissue",
+          userData: formData,
+        }),
       });
+
+      const data = await res.json();
 
       if (res.ok) {
         toast.success("Issue submitted successfully");
-        setDescription("");
-        setDepartment("");
-        setImage(null);
+        setFormData({ description: "", department: "", image: null });
       } else {
-        toast.error("Failed to submit. Try again.");
+        toast.error(data.message || "Failed to submit. Try again.");
       }
     } catch (err) {
+      console.error(err);
       toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-30 bg-black rounded-xl shadow">
+    <div className="max-w-xl mx-auto p-6 mt-30 bg-black text-white rounded-xl shadow">
       <h2 className="text-2xl font-bold mb-4">Report an Issue</h2>
 
       <div className="space-y-4">
+        {/* Description */}
         <div>
           <Label htmlFor="description">Issue Description</Label>
           <Textarea
             id="description"
-            value={description}
-            onChange={(e) => { setDescription(e.target.value)}}
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
             placeholder="Describe the issue in detail"
             className="mt-3"
           />
         </div>
 
+        {/* Department */}
         <div>
-            <Label htmlFor="department">Select Department</Label>
-            <select className="mt-3" onChange={(e) => setDepartment(e.target.value)}>
-                {
-                    alldepartments.map((dept,index)=>{
-                        return (
-                            <option key={index} value={dept} className=" bg-black text-white rounded-2xl">
-                                {dept.charAt(0).toUpperCase() + dept.slice(1)}
-                            </option>
-                        );
-                    })
-                }
-            </select>
+          <Label htmlFor="department">Select Department</Label>
+          <select
+            id="department"
+            name="department"
+            value={formData.department}
+            onChange={handleChange}
+            className="mt-3 p-2 rounded bg-gray-900 text-white w-full"
+          >
+            <option value="">Select...</option>
+            {alldepartments.map((dept, index) => (
+              <option key={index} value={dept}>
+                {dept.charAt(0).toUpperCase() + dept.slice(1)}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* Image */}
         <div>
           <Label htmlFor="image">Upload Image (optional)</Label>
-          <Input type="file" accept="image/*" className="mt-3" onChange={handleImageChange} />
-          {image && (
-            <p className="text-sm text-gray-500 mt-1">
-              Selected: <strong>{image.name}</strong>
+          <Input
+            id="image"
+            type="file"
+            accept="image/*"
+            className="mt-3"
+            onChange={handleImageChange}
+          />
+          {formData.image && (
+            <p className="text-sm text-gray-300 mt-1">
+              Selected: <strong>{formData.image.name}</strong>
             </p>
           )}
         </div>
 
-        <Button onClick={handleSubmit} disabled={loading}>
-          {loading ? "Submitting..." : "Submit Issue"}
+        {/* Submit */}
+        <Button onClick={handleSubmit} className="w-full">
+          Submit
         </Button>
       </div>
     </div>

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react'
 
 import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
+import {useRouter} from 'next/navigation';
+const demoImage="https://laser360clinic.com/wp-content/uploads/2020/08/user-image.jpg";
 // const user = {
   //   name: "Nishant Tyagi",
   //   gender: "Male",
@@ -24,7 +26,7 @@ import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
     Pending: <Clock className="text-orange-500" />,
   };
  export function DashboardCard (){
-  
+  const router = useRouter();
   const [user,setUser]=useState(null);
   const tempdata={
     // token:cookies().get("token").value
@@ -46,6 +48,10 @@ import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
 
         const data = await response.json();
         console.log("API Response:", data);
+        if(!data.user){
+          alert("User not found");
+          router.push("/login");
+        }
         setUser(data.user || null);
       // setUser(response.user);
     }
@@ -67,14 +73,14 @@ import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
             </div>
         </div>
         <img
-          src={user?.photoUrl}
+          src={user?.profilePicture || demoImage}
           alt="Profile"
           className="w-28 h-28 rounded-full object-cover border-2 border-blue-500"
         />
 
         <div className="flex flex-col space-y-2">
-          <p className="text-xl font-bold text-white">{user?.name}</p>
-          <p className="text-white">👤 {user?.gender} | 🎂 {user?.dob}</p>
+          <p className="text-xl font-bold text-white">{user?.firstName+" "+user?.lastName}</p>
+          <p className="text-white">👤 {user?.gender} | 🎂 {user?.dateOfBirth}</p>
           <p className="text-white">
             📧 {user?.email}{" "}
             {user?.emailVerified ? (
@@ -98,9 +104,9 @@ import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
            
         <div>
             <p className="text-white">📍 <strong>Address:</strong> {user?.address}</p>
-        <p className="text-white">🆔 <strong>Aadhaar:</strong> {user?.aadhaar}</p>
-        <p className="text-white">🧾 <strong>PAN:</strong> {user?.pan}</p>
-        <p className="text-white">🗳️ <strong>Voter ID:</strong> {user?.voterId}</p>
+        <p className="text-white">🆔 <strong>Aadhaar:</strong> {user?.aadhar}</p>
+        <p className="text-white">🧾 <strong>PAN:</strong> {user?.pancard}</p>
+        <p className="text-white">🗳️ <strong>Voter ID:</strong> {user?.rationcard}</p>
         </div>
       </div>
 

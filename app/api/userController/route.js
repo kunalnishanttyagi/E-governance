@@ -23,7 +23,7 @@ export async function POST(req,res) {
     const { action, ...data } = await req.json();
 
     await connectToDatabase();
-
+    console.log(action,data.userdata);
     switch (action) {
       case "signup":
         return await signup(data);
@@ -33,6 +33,12 @@ export async function POST(req,res) {
         return await sendOtp(data);
       case "checkOtp":
         return await checkOtp(data,req,res);
+      case "updateProfile":
+        return await updateProfile(data);
+      case "sendissue":
+        return await sendissue(data);
+      case "getmedicalhelp":
+        return await getmedicalhelp(data);
       default:
         return NextResponse.json(
           { message: "Invalid action" },
@@ -47,14 +53,37 @@ export async function POST(req,res) {
     );
   }
 }
+
+// export async function PUT(req) {
+//   try {
+//     console.log("Put request received");
+    
+//     const { action, ...data } = await req.json();
+
+//     await connectToDatabase();
+
+//     const users = await User.find({});
+//     console.log("Users found:", users);
+
+//     return NextResponse.json(users);
+//   } catch (error) {  
+//     console.error("Error in GET /api/users:", error);
+//     return NextResponse.json(
+//       { message: "Internal server error" },
+//       { status: 500 }
+//     );
+//   }
+// }
+// now i want to use super
+
 export async function GET(req) {
   try {
     console.log("GET request received");
+    
     // const { action, ...data } = await req.json();
-    // i will get the action from the url
-    const url=new URL(req.url);
-    const action=url.searchParams.get("action");
-    console.log("action:",action);
+    // get the action from the url
+    const action=req.nextUrl.searchParams.get("action");
+    console.log(action);
     await connectToDatabase();
 
     switch (action) {
@@ -219,7 +248,7 @@ async function checkOtp(data,req,res) {
     const token = jwt.sign(
       {
         // Last 3 digits of Aadhaar
-        aadhar: user.aadhar,
+        aadhar: user.aadhar.slice(-3),
 
         // Last 3 digits of PAN
         pan: user.phone.slice(-3),
@@ -318,17 +347,128 @@ export async function getuser(){
     return NextResponse.json({message:"Unauthorized"},{status:401});
   }
   const decoded=jwt.verify(token.value,process.env.JWT_SECRET);
-  // const user=await User.findOne({aadhar:decoded.aadhar});
+  const user=await User.findOne({aadhar:decoded.aadhar});
   console.log(decoded);
-  
-  const aadhar=decoded.aadhar;
-  console.log("aadhar:",aadhar);
-  const user=await User.findOne({aadhar:aadhar});
-  console.log("user:",user);
-  if(!user){
-    return NextResponse.json({message:"User not found"}, {status:404});
-  }
-  
-  return NextResponse.json({message:"User found",user}, {status:200});
+  return NextResponse.json({message:"User found",user:user}, {status:200});
 }
 
+
+export async function updateProfile(data){
+  try {
+    console.log("updateProfile called with data:", data);
+    const { address, phone, email, profilePicture,pancard,rationcard } = data.userData;
+    if (!address && !phone && !email && !profilePicture) {
+      return NextResponse.json(
+        { message: "All fields are required" },
+        { status: 400 }
+      );
+    }
+    const cookieStore=await cookies();
+  const token=cookieStore.get("token");
+  if(!token){
+    return NextResponse.json({message:"Unauthorized"},{status:401});
+  }
+  const decoded=jwt.verify(token.value,process.env.JWT_SECRET);
+  // const user=await User.findOne({aadhar:decoded.aadhar});
+  // console.log(decoded);
+  const aadhar=decoded.aadhar;
+  const user=await User.findOne({aadhar});
+  if(!user){
+    return NextResponse.json({message:"User not found"},{status:404});
+  }
+  console.log("User found:", user);
+  console.log(user.address)
+    if(address) user.address=address;
+    if(phone) user.phone=phone;
+    if(email) user.email=email;
+    if(profilePicture) user.profilePicture=profilePicture;
+    if(pancard){
+      if(!user.pancard) user.pancard=pancard;
+    
+    }
+    if(rationcard){
+      if(!user.rationcard) user.rationcard=rationcard;
+    }
+
+    await user.save();
+    console.log(user);
+    // console.log(aadhar, dateOfBirth, pancard, rationcard, email, phone, password);
+    // Check if user exists
+    // const existingUser = await User.findOne({ aadhar });
+    // if (existingUser) {
+      return NextResponse.json(
+        { message: "User updated successfully" },
+        { status: 200 }
+      );
+    // }
+  }
+  catch (err) {
+    console.error("Error in updateProfile:", err);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+const sendissue=async(data)=>{
+  try {
+    console.log("sending issue to user",data);
+    const { description, department, image } = data.userData;
+    if (!description || !department) {
+      return NextResponse.json(
+        { message: "All fields are required" },
+        { status: 400 }
+      );
+    }
+
+    // console.log("sending issue to user",description,department,image);
+    const user=await User.findOne({role:data.department});
+    if(!user){
+      console.log(" user not found");
+      return NextResponse.json({message:"User not found"},{status:404});
+    }
+    user.notifications.push(description);
+    await user.save();
+    console.log(user);
+    return NextResponse.json(
+      { message: "Issue submitted successfully" },
+      { status: 200 }
+    );
+  }
+    catch (err) {
+      console.error("Error in sendissue:", err);
+      return NextResponse.json(
+        { message: "Internal server error" },
+        { status: 500 }
+      );
+    }
+  }
+
+
+  const getmedicalhelp=async(data)=>{
+    try {
+      console.log("sending issue to user",data);
+      const { description, age, gender, frequency, image } = data.userData;
+      if (!description || !age || !gender || !frequency) {
+        return NextResponse.json(
+          { message: "All fields are required" },
+          { status: 400 }
+        );
+      }
+  
+      // console.log("sending issue to user",description,department,image);
+      
+      return NextResponse.json(
+        { message: "Issue submitted successfully" , data:"take rest and love yourself"},
+        { status: 200 }
+      );
+    }
+      catch (err) {
+        console.error("Error in sendissue:", err);
+        return NextResponse.json(
+          { message: "Internal server error" },
+          { status: 500 }
+        );
+      }
+    }

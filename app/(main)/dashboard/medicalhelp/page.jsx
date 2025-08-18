@@ -5,120 +5,131 @@ import { Label } from "../../../../@/components/ui/label";
 import { Input } from "../../../../@/components/ui/input";
 import { Textarea } from "../../../../@/components/ui/textarea";
 import { Button } from "../../../../@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../@/components/ui/select";
 import { toast } from "sonner";
 
-// type Props = {
-//   departments: string[]; // e.g., ["Electricity", "Water", "Roads"]
-// };
-// ["pradhan","police","dm","secratory","municipal","electricity"]
-
 export default function IssueReportForm() {
-  const [description, setDescription] = useState("");
-  const [department, setDepartment] = useState("");
-  const [image, setImage] = useState(null);
-  const [loading, setLoading] = useState(false);
-//   const alldepartments = ["pradhan", "police", "dm", "secratory", "municipal", "electricity"];
-    const allFrequency = ["FirstTime", "OneWeek", "OneMonth", "More"];
-const [frequency, setFrequency] = useState("");
+  const SYMPTOMS = [
+    "Fever",
+    "Vomiting",
+    "Cough",
+    "Headache",
+    "Shortness of breath",
+    "Fatigue",
+    "Sore throat",
+    "Chest pain",
+  ];
+
+  const FREQUENCIES = ["Daily", "Weekly", "Occasional"];
+
+  const [formData, setFormData] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    description: "",
+    symptoms: [],
+    frequency: "",
+    image: null,
+  });
+
+  // generic change (text/number/select)
+  const handleChange = (
+    e
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // image change
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+      setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
     }
   };
 
+  // toggle symptom selection
+  const toggleSymptom = (symptom) => {
+    setFormData((prev) => ({
+      ...prev,
+      symptoms: prev.symptoms.includes(symptom)
+        ? prev.symptoms.filter((s) => s !== symptom)
+        : [...prev.symptoms, symptom],
+    }));
+  };
+
+  // gender selection
+  const selectGender = (gender) => {
+    setFormData((prev) => ({ ...prev, gender }));
+  };
+
+  // submit
   const handleSubmit = async () => {
-    console.log("Submitting issue report...",description, frequency, image,selected);
-    if (!description || !frequency) {
-      toast.error("Please fill all fields");
+    console.log("Submitting medical help request...", formData);
+
+    if (!formData.age || !formData.gender || !formData.description) {
+      toast.error("Please fill all required fields");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("description", description);
-    formData.append("frequency", frequency);
-    formData.append("symptoms", JSON.stringify(selected));
-    // formData.append("department", department);
-    formData.append("age", age);
-    formData.append("gender",gender);
-    if (image) formData.append("image", image);
-
-    setLoading(true);
     try {
-      const res = await fetch("/api/report-issue", {
+      const res = await fetch("/api/userController", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "getmedicalhelp",
+          userData: formData,
+        }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        toast.success("Issue submitted successfully");
-        setDescription("");
-        setDepartment("");
-        setImage(null);
+        toast.success("Medical help request submitted!");
+        setFormData({
+          age: "",
+          gender: "",
+          description: "",
+          symptoms: [],
+          frequency: "",
+          image: null,
+        });
       } else {
-        toast.error("Failed to submit. Try again.");
+        toast.error(data.message || "Failed to submit. Try again.");
       }
     } catch (err) {
+      console.error(err);
       toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
     }
   };
-  const SYMPTOMS = [
-  "Fever",
-  "Vomiting",
-  "Cough",
-  "Headache",
-  "Shortness of breath",
-  "Fatigue",
-  "Sore throat",
-  "Chest pain",
-];
-  const [selected, setSelected] = useState([]);
-  
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState("");
-
-  const toggleSymptom = (symptom) => {
-    setSelected(prev =>
-      prev.includes(symptom)
-        ? prev.filter(s => s !== symptom)
-        : [...prev, symptom]
-    );
-  };
-//   const [age, setAge] = useState<number | ''>('');
-//   const [gender, setGender] = useState<string>("");
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-30 bg-black rounded-xl shadow">
-        <div className=" max-w-md bg-black shadow rounded-md">
-      <h2 className="text-xl font-semibold mb-4">Your Information</h2>
+    <div className="max-w-xl mx-auto p-6 mt-10 bg-black text-white rounded-xl shadow">
+      <h2 className="text-2xl font-bold mb-4">Medical Help Request</h2>
 
-      {/* Age Input */}
+      {/* Age */}
       <div className="mb-4">
-        <label className="block mb-1 font-medium">Age</label>
-        <input
+        <Label className="block mb-1">Age</Label>
+        <Input
           type="number"
           min="0"
-          value={age}
-          onChange={e => setAge(e.target.value === '' ? '' : parseInt(e.target.value))}
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+          name="age"
+          value={formData.age}
+          onChange={handleChange}
           placeholder="Enter your age"
         />
       </div>
 
-      {/* Gender Selection */}
+      {/* Gender */}
       <div className="mb-4">
-        <label className="block mb-1 bg-black font-medium">Gender</label>
+        <Label className="block mb-1">Gender</Label>
         <div className="flex gap-3">
-          {["Male", "Female", "Other"].map(option => (
+          {["Male", "Female", "Other"].map((option) => (
             <button
               key={option}
-              onClick={() => setGender(option)}
               type="button"
-              className={`px-4 py-2 bg-black rounded-full border ${
-                gender === option
-                  ? "bg-blue-800 text-white"
+              onClick={() => selectGender(option)}
+              className={`px-4 py-2 rounded-full border ${
+                formData.gender === option
+                  ? "bg-gray-600 text-white"
                   : "bg-black hover:bg-gray-600"
               }`}
             >
@@ -128,87 +139,80 @@ const [frequency, setFrequency] = useState("");
         </div>
       </div>
 
-      {/* Output */}
-      {/* <div className="mt-4 text-sm text-gray-700">
-        {age !== '' && <p>Age: {age}</p>}
-        {gender && <p>Gender: {gender}</p>}
-      </div> */}
-    </div>
-        
-      <h2 className="text-2xl font-bold mb-4">Report an Issue</h2>
-
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="description">Issue Description</Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => { setDescription(e.target.value)}}
-            placeholder="Describe the issue in detail"
-            className="mt-3"
-          />
-        </div>
-
-        <div className="  max-w-md">
-      <h2 className="text-xl font-bold mb-2">Select Your Symptoms</h2>
-
-      <div className="flex  flex-wrap gap-2 mb-4">
-        {SYMPTOMS.map(symptom => (
-          <button
-            key={symptom}
-            onClick={() => toggleSymptom(symptom)}
-            className={`px-3 py-1 bg-black rounded-full border ${
-              selected.includes(symptom)
-                ? "bg-black text-white"
-                : "bg-black hover:bg-gray-200"
-            }`}
-          >
-            {symptom}
-          </button>
-        ))}
+      {/* Description */}
+      <div className="mb-4">
+        <Label htmlFor="description">Issue Description</Label>
+        <Textarea
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Describe your issue in detail"
+          className="mt-2"
+        />
       </div>
 
-      {selected.length > 0 && (
-        <div>
-          <h3 className="font-semibold mb-1">Selected Symptoms:</h3>
-          <ul className="list-disc list-inside gap-3 flex bg-black text-sm text-white">
-            {selected.map(symptom => (
-              <h5 className=" " key={symptom}>{symptom}</h5>
-            ))}
-          </ul>
+      {/* Symptoms */}
+      <div className="mb-4">
+        <h3 className="text-xl font-bold mb-2">Select Your Symptoms</h3>
+        <div className="flex flex-wrap gap-2">
+          {SYMPTOMS.map((symptom) => (
+            <button
+              key={symptom}
+              type="button"
+              onClick={() => toggleSymptom(symptom)}
+              className={`px-3 py-1 rounded-full border ${
+                formData.symptoms.includes(symptom)
+                  ? "bg-gray-600 text-white"
+                  : "bg-black text-white hover:bg-gray-600"
+              }`}
+            >
+              {symptom}
+            </button>
+          ))}
         </div>
-      )}
-    </div>
-
-        <div>
-            <Label htmlFor="frequency">Select Frequency</Label>
-            <select className="mt-3" onChange={(e) => setFrequency(e.target.value)}>
-                {
-                    allFrequency.map((freq,index)=>{
-                        return (
-                            <option key={index} value={freq} className=" bg-black text-white rounded-2xl">
-                                {freq.charAt(0).toUpperCase() + freq.slice(1)}
-                            </option>
-                        );
-                    })
-                }
-            </select>
-        </div>
-
-        <div>
-          <Label htmlFor="image">Upload Image (optional)</Label>
-          <Input type="file" accept="image/*" className="mt-3" onChange={handleImageChange} />
-          {image && (
-            <p className="text-sm text-gray-500 mt-1">
-              Selected: <strong>{image.name}</strong>
-            </p>
-          )}
-        </div>
-
-        <Button onClick={handleSubmit} disabled={loading}>
-          {loading ? "Submitting..." : "Submit Issue"}
-        </Button>
       </div>
+
+      {/* Frequency */}
+      <div className="mb-4">
+        <Label htmlFor="frequency">Select Frequency</Label>
+        <select
+          id="frequency"
+          name="frequency"
+          value={formData.frequency}
+          onChange={handleChange}
+          className="mt-2 p-2 rounded bg-gray-900 text-white w-full"
+        >
+          <option value="">Select...</option>
+          {FREQUENCIES.map((freq, idx) => (
+            <option key={idx} value={freq}>
+              {freq}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Image */}
+      <div className="mb-4">
+        <Label htmlFor="image">Upload Image (optional)</Label>
+        <Input
+          id="image"
+          type="file"
+          accept="image/*"
+          className="mt-2"
+          onChange={handleImageChange}
+        />
+        {formData.image && (
+          <p className="text-sm text-gray-300 mt-1">
+            Selected: <strong>{formData.image.name}</strong>
+          </p>
+        )}
+      </div>
+
+      {/* Submit */}
+      <Button onClick={handleSubmit} className="w-full">
+        Submit Request
+      </Button>
     </div>
   );
 }

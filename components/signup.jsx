@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
+import { toast } from "sonner"
+import { useRouter } from "next/navigation";
 import { cn } from "../lib/utils";
 import {
   IconBrandGithub,
@@ -17,7 +19,7 @@ export default function SignupFormDemo() {
       [name]: value,
     }));
   };
-
+  const Router=useRouter();
   async function handleSubmit (e){
     e.preventDefault();
     console.log("Form submitted:", userData);
@@ -27,11 +29,17 @@ export default function SignupFormDemo() {
         "Content-Type": "application/json", // tells server we're sending JSON
       },
       body: JSON.stringify({ action:"signup", userData}), // convert JS object to JSON string
-    }).then((res) => res.json()).catch((err) => {
-      console.error("Error in signup API:", err);
-      return { error: "Failed to sign up" };
-    });
-    console.log("Response from signup API:", res);
+    })
+    const data=await res.json();
+
+    if(data.user){
+      console.log("pushing to dashboard")
+      // toast("Login successful");
+      toast("Signup Successful!")
+
+      // Router.push("/dashboard"); // ✅ Redirect
+    }
+    console.log("Response from signup API:", data);
     
 
     console.log("Form submitted");

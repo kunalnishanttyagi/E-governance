@@ -56,3 +56,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 
     now a admin can add user with their aadhar card number to their role of police munciple electricity 
+
+    now tommorow tasks 
+
+    all user to update profile picture address mobile number and a lot of things
+    
+    make a notification chamber where i will show new notification and all notifications
+
+    
+
+    // today i made the toast notification
+    // on sigin in and login
+
+    
