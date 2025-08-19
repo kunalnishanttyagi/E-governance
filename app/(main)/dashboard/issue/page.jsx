@@ -77,7 +77,7 @@ export default function IssueReportForm() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-30 bg-black text-white rounded-xl shadow">
+    <div className="max-w-xl mx-auto p-6 mt-20 bg-black text-white rounded-xl shadow">
       <h2 className="text-2xl font-bold mb-4">Report an Issue</h2>
 
       <div className="space-y-4">

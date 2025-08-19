@@ -4,7 +4,7 @@ import { Label } from "../../../components/ui/label";
 // import { toast } from "react-toastify";
 // import { Input } from "../ui/input";
 import { toast } from "sonner"
-
+import { useUser } from "../../../context/UserContext";
 import { Input } from "../../../components/ui/input";
 import { cn } from "../../../lib/utils";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ import { Button } from "../../../components/ui/button";
 // import { Router } from "next/router";
 
 export default function SignupFormDemo() {
+  const {user,setUser}=useUser();
     const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData((prevData) => ({
@@ -26,24 +27,24 @@ export default function SignupFormDemo() {
     }));
   };
   const router=useRouter();
-  useEffect(()=>{
-    console.log("checkUserExists called");
-    const checkUserExists=async()=>{
-      const res=await fetch("/api/userController?action=checkUserExists",{
-        method:"GET",
-        credentials:"include",
-        headers:{
-          "Content-Type":"application/json",
-        },
-      });
-      const data=await res.json();
-      console.log("Response from checkUserExists API:", data);
+  // useEffect(()=>{
+  //   console.log("checkUserExists called");
+  //   const checkUserExists=async()=>{
+  //     const res=await fetch("/api/userController?action=checkUserExists",{
+  //       method:"GET",
+  //       credentials:"include",
+  //       headers:{
+  //         "Content-Type":"application/json",
+  //       },
+  //     });
+  //     const data=await res.json();
+  //     console.log("Response from checkUserExists API:", data);
 
 
 
 
 
-      // change this at end
+  //     // change this at end
 
 
 
@@ -53,11 +54,11 @@ export default function SignupFormDemo() {
 
 
       
-      // if(data.result) router.push("/dashboard");
-    }
-    checkUserExists();
+  //     // if(data.result) router.push("/dashboard");
+  //   }
+  //   // checkUserExists();
     
-  },[]);
+  // },[]);
   
 const Router=useRouter();
   async function sendOtp(){
@@ -87,16 +88,17 @@ const Router=useRouter();
       body: JSON.stringify({action:"checkOtp",userData}), // convert JS object to JSON string
     })
     const data = await res.json();
-    console.log("Responsefrom checkOtp API:", data);
+    // console.log("Responsefrom checkOtp API:", data);
     
     // if(res.user){
     //   router.push("/dashboard");
     // }
-    console.log("thisis the status", data);
+    // console.log("thisis the status", data);
     if (res.status == 200) {
       console.log("pushing to dashboard")
       // toast("Login successful");
       toast("Login Successful!")
+      // console.log("user to be set in setuser ",data.user);
 
       Router.push("/dashboard"); // ✅ Redirect
     } else {
@@ -114,7 +116,7 @@ const Router=useRouter();
   })
   return (
     <div
-      className="shadow-input mt-12 mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+      className="shadow-input mt-20 mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
         Welcome to Aceternity
       </h2>

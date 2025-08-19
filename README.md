@@ -72,3 +72,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
     medical help request implemented and now the medical help request will sent
 
     now we will use generative ai to handle all medical issues 
+
+    nwo i have worked on user context and auth for the app
+
+    all the links are working fine and i have made the user context and auth for the app
+
+
+    tommorow tasks
+    make a notification chamber where i will show new notification and all notifications
+    make all routes protected

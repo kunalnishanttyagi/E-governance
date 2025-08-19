@@ -6,6 +6,7 @@ import { Input } from "../../../../@/components/ui/input";
 import { Textarea } from "../../../../@/components/ui/textarea";
 import { Button } from "../../../../@/components/ui/button";
 import { toast } from "sonner";
+import { set } from "mongoose";
 
 export default function IssueReportForm() {
   const SYMPTOMS = [
@@ -81,17 +82,18 @@ export default function IssueReportForm() {
       });
 
       const data = await res.json();
-
+      console.log(data);
+      setMedicalSolution(data.solution);
       if (res.ok) {
         toast.success("Medical help request submitted!");
-        setFormData({
-          age: "",
-          gender: "",
-          description: "",
-          symptoms: [],
-          frequency: "",
-          image: null,
-        });
+        // setFormData({
+        //   age: "",
+        //   gender: "",
+        //   description: "",
+        //   symptoms: [],
+        //   frequency: "",
+        //   image: null,
+        // });
       } else {
         toast.error(data.message || "Failed to submit. Try again.");
       }
@@ -100,9 +102,10 @@ export default function IssueReportForm() {
       toast.error("Something went wrong");
     }
   };
+  const [medicalSolution, setMedicalSolution] = useState("");
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-10 bg-black text-white rounded-xl shadow">
+    <div className="max-w-xl mx-auto p-6 mt-20 bg-black text-white rounded-xl shadow">
       <h2 className="text-2xl font-bold mb-4">Medical Help Request</h2>
 
       {/* Age */}
@@ -213,6 +216,18 @@ export default function IssueReportForm() {
       <Button onClick={handleSubmit} className="w-full">
         Submit Request
       </Button>
+
+      {
+        medicalSolution &&
+        <div className="p-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">AI Medical Solution</h1>
+      
+        <div className="bg-black-100 p-4 rounded-lg shadow">
+          <p className="whitespace-pre-line">{medicalSolution}</p>
+        </div>
+      
+    </div>
+      }
     </div>
   );
 }

@@ -30,7 +30,7 @@ export default function Applications() {
     },
   ];
   return (
-    <div className="relative overflow-hidden w-full h-full py-20">
+    <div className="relative overflow-hidden w-full h-full py-20" id="services" >
       <Carousel slides={slideData} />
     </div>
   );

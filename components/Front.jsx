@@ -38,11 +38,9 @@ const Front = () => {
           backgroundImage: `url(${images[currentIndex]})`,
         }}
       ></div>
-      <div className="absolute top-0 h-screen w-screen gap-5 flex justify-center items-center">
+      <div className="absolute top-80 w-screen gap-5 flex justify-center items-center">
         <div className="bg-white bg-opacity-80 p-2 rounded-3xl  shadow-md max-w-xl w-full text-center">
-          {/* <h1 className="text-2xl font-bold mb-4">
-            Search Government Services
-          </h1> */}
+          
           <div className="flex gap-4">
             <input
               type="text"

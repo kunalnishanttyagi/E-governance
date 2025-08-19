@@ -91,7 +91,8 @@ export async function GET(req) {
         return await checkOtp();
       case "getuser":
         return await getuser();
-
+      case "signout":
+        return await signOut();
       default:
         return NextResponse.json(
           { message: "Invalid action" },
@@ -449,7 +450,7 @@ const sendissue=async(data)=>{
   const getmedicalhelp=async(data)=>{
     try {
       console.log("sending issue to user",data);
-      const { description, age, gender, frequency, image } = data.userData;
+      const { description, age, gender, frequency, image=null } = data.userData;
       if (!description || !age || !gender || !frequency) {
         return NextResponse.json(
           { message: "All fields are required" },
@@ -458,17 +459,79 @@ const sendissue=async(data)=>{
       }
   
       // console.log("sending issue to user",description,department,image);
+
+      // const data = await req.json();
+    // const { description, age, gender, frequency, image=null } = data.userData;
+
+    // Construct prompt for Gemini
+    const prompt = `
+    The user has a medical issue. Provide a helpful solution/advice.
+    Details:
+    - Description: ${description}
+    - Age: ${age}
+    - Gender: ${gender}
+    - Frequency: ${frequency}
+    `;
+
+    // Call Gemini API
+    console.log("Calling Gemini API with prompt:", prompt);
+    const geminiRes = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+        process.env.GEMINI_API_KEY, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    });
+
+    const geminiData = await geminiRes.json();
+    console.log("Gemini API Response:", geminiData);
+    const solution =
+      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No solution found, please try again.";
+
+    return NextResponse.json({ success: true, solution });
+  } catch (err) {
+    console.error("Gemini API Error:", err);
+    return NextResponse.json(
+      { success: false, message: "Error generating medical solution" },
+      { status: 500 }
+    );
+  }
       
-      return NextResponse.json(
-        { message: "Issue submitted successfully" , data:"take rest and love yourself"},
-        { status: 200 }
-      );
-    }
-      catch (err) {
-        console.error("Error in sendissue:", err);
-        return NextResponse.json(
-          { message: "Internal server error" },
-          { status: 500 }
-        );
-      }
-    }
+      
+}
+
+
+const signOut=async(data)=>{
+  
+    
+
+  try {
+    
+    console.log("Signing out");
+  const cookieStore = await cookies();
+  cookieStore.set({
+    name: "token",
+    value: "",
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    maxAge: 0, // expire immediately
+  });
+
+  return Response.json({ message: "Logged out" });
+}
+  
+   catch (err) {
+    console.error("Error in signOut:", err);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+    // console.log("sending issue to user",description,department,image);
+
+    // const data = await req.json();

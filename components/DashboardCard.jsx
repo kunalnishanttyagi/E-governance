@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 import { BadgeCheck, Clock, AlertCircle } from "lucide-react";
 import {useRouter} from 'next/navigation';
+import {useUser} from "../context/UserContext";
 const demoImage="https://laser360clinic.com/wp-content/uploads/2020/08/user-image.jpg";
 // const user = {
   //   name: "Nishant Tyagi",
@@ -27,36 +28,40 @@ const demoImage="https://laser360clinic.com/wp-content/uploads/2020/08/user-imag
   };
  export function DashboardCard (){
   const router = useRouter();
-  const [user,setUser]=useState(null);
+  const {user}=useUser();
   const tempdata={
     // token:cookies().get("token").value
     name:"Nishant Tyagi",
   }
   useEffect(()=>{
-    console.log("use effect called");
-    // here i will make a request to fetch data in user 
-    // now i will fetch user from database
-    const fetchuser=async()=>{
-      console.log("fetchuser called");
-      const response = await fetch("/api/userController?action=getuser", {
-          method: "GET",
-          credentials: "include", // ✅ sends httpOnly cookies
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+    console.log("use effect called in dashboard card");
+    console.log("user",user);
+    // console.log("user",data);
 
-        const data = await response.json();
-        console.log("API Response:", data);
-        if(!data.user){
-          alert("User not found");
-          router.push("/login");
-        }
-        setUser(data.user || null);
-      // setUser(response.user);
-    }
-    fetchuser();
-  },[])
+    // setUser(data);
+  //   // here i will make a request to fetch data in user 
+  //   // now i will fetch user from database
+  //   const fetchuser=async()=>{
+  //     console.log("fetchuser called");
+  //     const response = await fetch("/api/userController?action=getuser", {
+  //         method: "GET",
+  //         credentials: "include", // ✅ sends httpOnly cookies
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+
+  //       const data = await response.json();
+  //       console.log("API Response:", data);
+  //       if(!data.user){
+  //         alert("User not found");
+  //         router.push("/login");
+  //       }
+  //       setUser(data.user || null);
+  //     // setUser(response.user);
+  //   }
+  //   fetchuser();
+  },[user])
   return (
     <div className="max-w-7xl mt-24 mx-auto flex flex-wrap justify-around bg-gray-800 shadow-md rounded-xl p-6 border space-y-6">
       

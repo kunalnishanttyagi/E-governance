@@ -1,3 +1,4 @@
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider"
@@ -5,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { Toaster } from "../@/components/ui/sonner"
 // import Background from "../components/Background";
 
+import { UserProvider } from "../context/UserContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,10 +34,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden `}
       >
+        <UserProvider>
         <Navbar></Navbar>
         {/* <Background></Background> */}
         {children}
         <Toaster />
+        </UserProvider>
       </body>
       </ThemeProvider>
     </html>
