@@ -13,12 +13,12 @@ export async function GET() {
   try {
     // verify token
     const decoded = jwt.verify(token.value, process.env.JWT_SECRET);
-    // console.log("decoded ia",decoded);
-    // console.log(decoded.aadhar);
+    console.log("decoded ia",decoded);
+    console.log(decoded.aadhar);
     const user=await User.findOne({aadhar:decoded.aadhar});
     // you can fetch user from DB if needed
     console.log("user fetched");
-    // console.log("user",user);
+    console.log("user",user);
     return Response.json({
       success: true,
       user: user,

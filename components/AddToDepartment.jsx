@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Button } from "./ui/button";
 
 export default function AdminForm() {
   const [aadhar, setAadhar] = useState("");
@@ -9,7 +12,23 @@ export default function AdminForm() {
     setDepartments(dept);
   };
   const alldepartments = ["pradhan", "police", "dm", "secratory", "municipal", "electricity"];
-
+  const notificationForm={
+    notification:"",
+  }
+  const handleChange=(e)=>{
+    notificationForm.notification=e.target.value;
+  }
+  const sendNotification=async (e)=>{
+    e.preventDefault();
+    console.log(notificationForm);
+    const res = await fetch("/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "sendNotification", notificationForm })
+    });
+    const data = await res.json();
+    console.log(data);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting form with aadhar:", aadhar, "and departments:", departments);
@@ -23,9 +42,9 @@ export default function AdminForm() {
   };
 
   return (
-    <div className=" mt-12 flex justify-center items-center" >
+    <div className=" mt-12 flex flex-col items-center justify-centerr" >
         <form className=" mt-12  " onSubmit={handleSubmit}>
-      <div className=" flex gap-5">
+      <div className=" flex flex-col gap-5">
         <input
         type="text"
         placeholder="Aadhar Number"
@@ -52,8 +71,15 @@ export default function AdminForm() {
       </div>
       
 
-      <button type="submit" className=" p-2 bg-blue-800 " >Add Aadhar</button>
+      <button type="submit" className=" mt-5 p-2 bg-blue-800 " >Add Aadhar</button>
     </form>
+
+    <form onSubmit={sendNotification} className=" mt-12" >
+      <Label>Notification</Label>
+      <Input className="" onChange={handleChange} ></Input>
+      <Button type="submit" className="mt-5 p-2 bg-blue-800 ">Submit</Button>
+    </form>
+
     </div>
   );
 }

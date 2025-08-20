@@ -2,21 +2,45 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../lib/db';
 import User from '../../../models/user.js';
+import user from '../../../models/user.js';
 export async function POST(req){
     try {
         const {action,...data}=await req.json();
         await connectToDatabase();
-        console.log("Action received:", action, "with data:", data.aadhar, data.departments);
+        // console.log("Action received:", action, "with data:", data.aadhar, data.departments);
         switch(action){
             
             case 'addToDepartment': {
                 return addToDepartment(data.aadhar, data.departments);
+            }
+            case 'sendNotification': {
+                return sendNotification(data.notificationForm);
             }
             default:
                 return NextResponse.json({message: 'Invalid action'}, {status: 400});
         }        
     } catch (error) {
         console.error('Error in POST /api/admin:', error);
+        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    }
+}
+const sendNotification = async (notificationForm) => {
+    try {
+        if (!notificationForm.notification) {
+            return NextResponse.json({ message: 'Notification is required' }, { status: 400 });
+        }
+        const  notification  = notificationForm.notification;
+        console.log("Notification received:", notification);
+        
+    
+    await User.updateMany(
+      {},
+      { $push: { notifications: notificationForm.notification } }
+    );
+
+    return NextResponse.json({ success: true, message: "Notification sent to all users!" });
+  } catch (error) {
+        console.error('Error sending notification:', error);
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     }
 }

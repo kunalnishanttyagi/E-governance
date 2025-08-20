@@ -96,6 +96,7 @@ const Router=useRouter();
     // console.log("thisis the status", data);
     if (res.status == 200) {
       console.log("pushing to dashboard")
+      console.log("data from login", data)
       // toast("Login successful");
       toast("Login Successful!")
       // console.log("user to be set in setuser ",data.user);

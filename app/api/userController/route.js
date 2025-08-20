@@ -249,7 +249,7 @@ async function checkOtp(data,req,res) {
     const token = jwt.sign(
       {
         // Last 3 digits of Aadhaar
-        aadhar: user.aadhar.slice(-3),
+        aadhar: user.aadhar,
 
         // Last 3 digits of PAN
         pan: user.phone.slice(-3),

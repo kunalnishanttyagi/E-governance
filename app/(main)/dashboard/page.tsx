@@ -20,13 +20,14 @@ useEffect(() => {
   const fetchUser = async () => {
       console.log("fetching user...");
       const data = await getCurrentUser();
-      console.log("response:", data);
-
+      console.log("response after running get current user :", data);
+      // console.log(data);
       if (data) {
         console.log("user data after login called", data);
       setUser(data);
       } else {
-        router.push("/login");
+        
+        // router.push("/login");
       }
     
   }

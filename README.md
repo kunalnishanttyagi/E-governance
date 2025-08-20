@@ -81,3 +81,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
     tommorow tasks
     make a notification chamber where i will show new notification and all notifications
     make all routes protected
+
+
+    i have made the notification chamber 
+        notifications are stored in the database
+        notifications are sent to the user
+        user can dismiss the notification
+
+
+    protecting routes still left
